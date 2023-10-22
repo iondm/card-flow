@@ -5,7 +5,19 @@
 import Foundation
 import SwiftUI
 
-class GameCard {
+struct GameCard {
     var backgroundColor = Color.white
-    var text = ""
+    var question: String
+    var answer: String
+    var type: String
+    var id : String
+    
+    init() {
+        // TODO: Remove, this is only for dev and test.
+        backgroundColor = ColorManager.Orange
+        question = "What is the capital of France?"
+        answer = "Paris"
+        type = "Geography"
+        id = "1"
+    }
 }

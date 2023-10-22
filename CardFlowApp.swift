@@ -6,43 +6,29 @@ import SwiftUI
 
 @main
 struct CardFlowApp: App {
+    var gameCard = GameCard()
     
+    // Application start point.
     var body: some Scene {
         WindowGroup {
-            StartingView()
-        }
-    }
-}
-
-// A view used to start or test the application.
-struct StartingView: View {
-    @State var isFrontCardView: Bool = false
-    
-    var vm = GameCardVM(model: GameCard())
-    
-    var frontView = Text("front")
-    var backView = AnyView(Text("back"))
-    
-    var body: some View {
-        VStack {
-            GameCardView(backView: backView, vm: vm) {
-                frontView
-            }
-            .onTapGesture {
-                vm.flipCard()
-            }
-            
-            Button(
-                action: { vm.flipCard()},
-                label: {Text("Click for the magic!") }
+            SessionView(
+                frontView:  AnyView(
+                    QuestionCardView(
+                        question: gameCard.question,
+                        answer: gameCard.answer
+                    )
+                ),
+                backView: AnyView(
+                    Text(gameCard.answer)
+                )
             )
-        }.background(ColorManager.Orange)
+        }
     }
 }
 
 struct CardFlowApp_Previews: PreviewProvider {
     static var previews: some View {
-        StartingView()
+        SessionView()
     }
 }
 

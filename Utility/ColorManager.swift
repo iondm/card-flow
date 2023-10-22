@@ -25,4 +25,6 @@ struct ColorManager {
     static let Turquoise = Color("Turquoise")
     static let WetAsf = Color("WetAsf")
     static let Wisteria = Color("Wisteria")
+    
+    static let backgroundColor = Color("Coluds")
 }
