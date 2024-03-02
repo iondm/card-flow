@@ -6,29 +6,46 @@ import SwiftUI
 
 @main
 struct CardFlowApp: App {
-    var gameCard = GameCard()
+    @State private var selectedTab: Tab = .game
+    
+    init() {
+        UITabBar.appearance().isHidden = true
+    }
     
     // Application start point.
     var body: some Scene {
         WindowGroup {
-            SessionView(
-                frontView:  AnyView(
-                    QuestionCardView(
-                        question: gameCard.question,
-                        answer: gameCard.answer
-                    )
-                ),
-                backView: AnyView(
-                    Text(gameCard.answer)
-                )
-            )
+            ZStack {
+                TabView(selection: $selectedTab,
+                        content:  {
+                    ForEach(Tab.allCases, id: \.rawValue) {tab in
+                        switch tab {
+                        case .game:
+                            SessionView()
+                                .tag(tab)
+                        case .list:
+                            QuestionList()
+                                .tag(tab)
+                        }
+                        
+                    }
+                })
+                
+                VStack {
+                    Spacer()
+                    TabBard(selectedTab: $selectedTab)
+                        
+                }
+                .padding(.bottom, 20)
+                .edgesIgnoringSafeArea(.all)
+            }
         }
     }
 }
 
-struct CardFlowApp_Previews: PreviewProvider {
-    static var previews: some View {
-        SessionView()
+#Preview {
+    VStack {
+        QuestionList()
+        TabBard(selectedTab: .constant(.game))
     }
 }
-

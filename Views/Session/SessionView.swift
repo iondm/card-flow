@@ -5,58 +5,101 @@
 import SwiftUI
 
 struct SessionView: View {
+    
+    @ObservedObject var vm: SessionVM = SessionVM()
+    
     @State var isFrontCardView: Bool = false
-
-    var frontView: AnyView
-    var backView: AnyView
-    
-    let gameCardVM = GameCardVM(model: GameCard())
-    
-    init() {
-        let gameCard = GameCard()
-        
-        self.frontView = AnyView(QuestionCardView(
-            question: gameCard.question,
-            answer: gameCard.answer
-        ))
-        self.backView = AnyView(
-            Text(gameCard.answer)
-        )
-    }
-    
-    init(frontView: AnyView, backView: AnyView) {
-        self.frontView = frontView
-        self.backView = backView
-    }
+    @State var transitionTrigger: Bool = true
+    @State var isCardSwapButtonDisables: Bool = false
+    @State var isLeftTransiction: Bool = false
     
     var body: some View {
         VStack {
             VStack {
+                VStack {
+                    if transitionTrigger {
+                        if isLeftTransiction {
+                            GameCardView(gameCardVM: vm.gameCardVM)
+                                .transactionLeadingIn()
+                        } else {
+                            GameCardView(gameCardVM: vm.gameCardVM)
+                                .transactionTrailingOut()
+                        }
+                    } else {
+                        if isLeftTransiction {
+                            GameCardView(gameCardVM: vm.gameCardVM)
+                                .transactionLeadingIn()
+                        } else {
+                            GameCardView(gameCardVM: vm.gameCardVM)
+                                .transactionTrailingOut()
+                        }
+                    }
+                }
+                .onTapGesture {
+                    vm.gameCardVM.flipCard()
+                }
                 
-                GameCardView(
-                    backView: backView,
-                    frontView: frontView,
-                    vm: gameCardVM)
-                .frame(maxHeight: UIScreen.screenHeight * 0.48 )
+                HStack {
+                    Spacer()
+                    
+                    Image(systemName: "arrow.left.circle")
+                        .onTapGesture { transictionAnimation(isLeftTransiction: true) }
+                        .disabled(isCardSwapButtonDisables || !vm.isPrevieousCardAvailable)
+                        .scaleEffect(
+                             1.50
+                        )
+                        .foregroundColor(vm.isPrevieousCardAvailable ? .blue : .gray)
+                    
+                    Spacer()
+                    
+                    Image(systemName: "arrow.right.circle")
+                        .onTapGesture{ transictionAnimation(isLeftTransiction: false) }
+                        .disabled(isCardSwapButtonDisables || !vm.isNextCardAvailable)
+                        .scaleEffect(1.50)
+                        .foregroundColor(vm.isNextCardAvailable ? .blue : .gray)
+                    
+                    Spacer()
+                }
                 .padding(30)
-                
-                Button(
-                    action: { gameCardVM.flipCard() },
-                    label: {Text("Click for the magic!") }
-                )
-                
-                Spacer()
-                
             }
-            .background(ColorManager.backgroundColor)
         }
-        .ignoresSafeArea(.keyboard)
+        .padding(.top, 50)
+        .padding(.bottom, 80)
+        .background(
+            LinearGradient(gradient: Gradient(colors: [ColorManager.WetAsf, ColorManager.Midnight, ColorManager.Pomegranate]), startPoint: .topLeading, endPoint: .bottomTrailing)
+          )
+        
     }
+    
+    func transictionAnimation(isLeftTransiction: Bool) {
+        guard isLeftTransiction && vm.isPrevieousCardAvailable || !isLeftTransiction && vm.isNextCardAvailable else {
+            return
+        }
+        
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+            if isLeftTransiction {
+                vm.previousQuestion()
+            } else {
+                vm.nextQuestion()
+            }
+        }
+ 
+        
+        self.isLeftTransiction = isLeftTransiction
+        isCardSwapButtonDisables = true
+        
+        withAnimation(.linear(duration: 0.35)) {
+            transitionTrigger.toggle()
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+            isCardSwapButtonDisables = false
+        }
+    }
+    
 }
 
-struct SessionView_Previews: PreviewProvider {
-    static var previews: some View {
-        SessionView()
-    }
+#Preview {
+    SessionView(vm: SessionVM(isDebug: true))
 }
-

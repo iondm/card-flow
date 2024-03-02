@@ -1,23 +1,25 @@
 //
-//  Created by ion.dm on 05/07/23.
+//  GameCard.swift
+//  CardFlow
+//
+//  Created by Drumea Ion on 15/01/24.
 //
 
 import Foundation
-import SwiftUI
 
-struct GameCard {
-    var backgroundColor = Color.white
-    var question: String
-    var answer: String
-    var type: String
-    var id : String
+struct GameCard: Identifiable, Codable {
+    var id = UUID()
+    let question: String
+    let answer: String
+    
+    init(_ question: String,_ answer: String) {
+        self.question = question
+        self.answer = answer
+    }
     
     init() {
         // TODO: Remove, this is only for dev and test.
-        backgroundColor = ColorManager.Orange
         question = "What is the capital of France?"
         answer = "Paris"
-        type = "Geography"
-        id = "1"
     }
 }

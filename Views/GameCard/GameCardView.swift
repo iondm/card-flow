@@ -7,27 +7,31 @@ import SwiftUI
 // TODO: Improve the animation, by watching the swiftHeroes Video.
 
 struct GameCardView: View {
-    var backView: AnyView
-    var frontView: AnyView
-
-    @ObservedObject var vm: GameCardVM
+    @ObservedObject private var vm: GameCardVM
     
+    init(gameCardVM: GameCardVM) {
+        vm = gameCardVM
+    }
+
     var body: some View {
         HStack {
             ZStack {
-                GameCardStructure(vm: vm, isFrontUp: true) { frontView }
-                GameCardStructure(vm: vm, isFrontUp: false) { backView }
+                GameCardStructure(vm: vm, isFrontUp: true) {
+                    Text(vm.cardData.question)                }
+                
+                GameCardStructure(vm: vm, isFrontUp: false) {
+                    Text(vm.cardData.answer)
+                }
             }
         }
 
     }
 }
 
-
 private struct GameCardStructure<InnerView: View>: View {
     @ObservedObject var vm: GameCardVM
-    var backColor: Color = ColorManager.Orange
-    var frontColor: Color = ColorManager.SunFlower
+    var backColor: Color = ColorManager.Carrot
+    var frontColor: Color = ColorManager.Carrot
     var isFrontUp: Bool
 
     @ViewBuilder var view: InnerView;
@@ -38,8 +42,6 @@ private struct GameCardStructure<InnerView: View>: View {
             VStack {
                 Spacer()
                 view
-                    
-
                 Spacer()
             }
             Spacer()
@@ -51,4 +53,8 @@ private struct GameCardStructure<InnerView: View>: View {
         )
 
     }
+}
+
+#Preview {
+    GameCardView(gameCardVM: GameCardVM(model: GameCard()))
 }
