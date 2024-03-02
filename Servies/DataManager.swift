@@ -26,7 +26,7 @@ class DataManager {
     
     static func printCards(_ sections: Dictionary<String, [GameCard]>) {
         for (section, gameCards) in sections {
-            print("\(section) -> \(gameCards)")
+//            print("printCards \(section) -> \(gameCards)")
         }
     }
         

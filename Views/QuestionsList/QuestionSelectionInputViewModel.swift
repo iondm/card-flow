@@ -16,7 +16,7 @@ enum QuestionSelectionKind {
 class QuestionSelectionInputViewModel {
     var kind: QuestionSelectionKind
     
-    var isSectionTitle: String {
+    var title: String {
         switch kind {
         case .question:
             "New Question"

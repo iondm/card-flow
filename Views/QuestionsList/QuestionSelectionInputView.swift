@@ -10,16 +10,18 @@ import SwiftUI
 
 
 struct QuestionSelectionInputView: View {
+    @Environment(\.dismiss) var dismiss
     @State var section: String = ""
     @State var question: String = ""
     @State var answer: String = ""
     
+    let selectedSection: String
+    
     var vm: QuestionSelectionInputViewModel
     
-    @Environment(\.dismiss) var dismiss
-    
-    init(kind: QuestionSelectionKind = .section) {
+    init(kind: QuestionSelectionKind = .section, section: String = "") {
         self.vm = QuestionSelectionInputViewModel(kind: kind)
+        self.selectedSection = section
     }
     
     var body: some View {
@@ -30,7 +32,7 @@ struct QuestionSelectionInputView: View {
                         
                     case .section:
                         TextField(
-                            "Section",
+                            "Name",
                             text: $section
                         )
                         
@@ -47,7 +49,8 @@ struct QuestionSelectionInputView: View {
                     }
                 }
             }
-            .navigationTitle(vm.isSectionTitle)
+            .navigationTitle(vm.title)
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button("Add", action: save)
@@ -62,7 +65,7 @@ struct QuestionSelectionInputView: View {
             vm.saveSection(section)
 
         case .question:
-            vm.saveGameCard(GameCard(question, answer), section: section)
+            vm.saveGameCard(GameCard(question, answer), section: selectedSection)
         }
         
         dismiss()
