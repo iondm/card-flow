@@ -12,7 +12,6 @@ class GameCardVM : ObservableObject {
     
     @Published var backDegree: Double = 0.0
     @Published var frontDegree: Double = -90.0
-    @Published var transitionTrigger: Bool = false
     
     var isFlipped = false
     

@@ -5,18 +5,18 @@
 import SwiftUI
 
 struct GameCarvViewModifier: ViewModifier {
-    var color: Color = Color.white
+    var color: Color = ColorManager.firstColor
     
     func body(content: Content) -> some View {
         content
-            .background(color)
+            .foregroundColor(color)
             .cornerRadius(20)
             .shadow(color: Color.black.opacity(0.2), radius: 4)
     }
 }
 
 extension View {
-    func gameCard(color: Color = Color.white) -> some View {
+    func gameCard(color: Color = ColorManager.firstColor) -> some View {
         modifier(GameCarvViewModifier(color: color))
     }
 }

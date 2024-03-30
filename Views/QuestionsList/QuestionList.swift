@@ -12,6 +12,9 @@ struct QuestionList: View {
     @ObservedObject var vm = QuestionListVM()
     @State private var showAddSectionView = false
     
+    init() { UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+    }
+    
     var AddSection: some View {
         Button("Add Section") {
             showAddSectionView.toggle()
@@ -52,6 +55,7 @@ private struct QuestionSection: View {
     @State private var answer = ""
     @State private var showAddGameCardView = false
     
+    @Environment(\.editMode) private var editMode
     @ObservedObject var vm: QuestionListVM
     
     var section: String
@@ -60,7 +64,7 @@ private struct QuestionSection: View {
     var AddGameCardButton: some View {
         Image(systemName: "plus.app")
             .scaleEffect(1.30)
-            .foregroundStyle(.black)
+            .foregroundStyle(ColorManager.firstColor)
             .onTapGesture { showAddGameCardView.toggle() }
             .sheet(
                 isPresented: $showAddGameCardView,
@@ -72,7 +76,7 @@ private struct QuestionSection: View {
     
     var RemoveSectionButton: some View {
         Image(systemName: "minus.circle")
-            .foregroundStyle(.black)
+            .foregroundStyle(.red)
             .scaleEffect(1.30)
             .onTapGesture {
                 vm.remove(section: section)
@@ -81,12 +85,22 @@ private struct QuestionSection: View {
     
     var body: some View {
         Section(header: HStack {
+            if editMode?.wrappedValue.isEditing == true {
+                RemoveSectionButton
+            }
+            
             Text(section)
-                .foregroundStyle(.black)
-            RemoveSectionButton
+                .foregroundStyle(ColorManager.firstColor)
+                .font(.system(size: 20))
+                .padding(.trailing)
+            
             Spacer()
+            
             AddGameCardButton
-        }) {
+        }
+            .padding(.vertical, 10)
+            .animation(.default, value: editMode?.wrappedValue)
+        ) {
             ForEach(cards) { gameCard in
                 VStack {
                     HStack {
