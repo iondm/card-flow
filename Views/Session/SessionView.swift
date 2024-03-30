@@ -6,19 +6,21 @@ import SwiftUI
 
 struct SessionView: View {
     
-    @ObservedObject var vm: SessionVM = SessionVM()
+    @ObservedObject var vm: SessionVM
     
     @State var isFrontCardView: Bool = false
     @State var isCardSwapButtonDisables: Bool = false
-    
+    @State var title: String = "Title"
     var body: some View {
         VStack {
+            Text(vm.title)
+                .foregroundColor(.white)
+                .font(.title)
+                .padding(.bottom, 30)
+            
             ZStack {
-                ForEach(0..<3) { n in
-                    GameCardView(gameCardVM: vm.gameCardVM)
-                }
-                .onTapGesture {
-                    vm.gameCardVM.flipCard()
+                ForEach(0..<vm.gameCardVMs.count, id: \.self) { index in
+                    GameCardView(gameCardVM: vm.gameCardVMs[index])
                 }
             }
         }

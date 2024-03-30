@@ -8,18 +8,9 @@
 import SwiftUI
 
 class SessionVM: ObservableObject {
-    @Published var gameCardVM = GameCardVM(model: GameCard())
-    
-    var gameCards: [GameCard] = []
-    
+    let gameCardVMs: [GameCardVM]
+    let title: String
     var currentCardIndex: Int = 0
-    
-    var isNextCardAvailable: Bool {
-        if (currentCardIndex + 1) < gameCards.count {
-            return true
-        }
-        return false
-    }
     
     var isPrevieousCardAvailable: Bool {
         currentCardIndex > 0
@@ -27,40 +18,17 @@ class SessionVM: ObservableObject {
 
     init(isDebug: Bool = false) {
         if isDebug {
-            gameCards = [GameCard()]
-            gameCardVM = GameCardVM(model: GameCard())
+            gameCardVMs = [GameCardVM(model: GameCard()), GameCardVM(model: GameCard()), GameCardVM(model: GameCard())]
+            title = "Test"
             return
         }
         
         let sections = DataManager.getSections()
-        gameCards = sections[sections.keys.first ?? ""] ?? []
+        let gameCards = sections[sections.keys.first ?? ""] ?? []
         
-        if currentCardIndex < gameCards.count {
-            gameCardVM = GameCardVM(model: gameCards[currentCardIndex])
-        }
-    }
-    
-    func nextQuestion() {
-        guard isNextCardAvailable else {
-            return
-        }
-        
-        currentCardIndex += 1
-        
-        if currentCardIndex < gameCards.count {
-            gameCardVM = GameCardVM(model: gameCards[currentCardIndex])
-        }
-    }
-    
-    func previousQuestion() {
-        guard isPrevieousCardAvailable else {
-            return
-        }
-        
-        currentCardIndex -= 1
-        
-        if currentCardIndex < gameCards.count {
-            gameCardVM = GameCardVM(model: gameCards[currentCardIndex])
+        title = sections.keys.first ?? ""
+        gameCardVMs = gameCards.map {
+            GameCardVM(model: $0)
         }
     }
 }

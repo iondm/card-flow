@@ -21,7 +21,7 @@ struct CardFlowApp: App {
                     ForEach(Tab.allCases, id: \.rawValue) {tab in
                         switch tab {
                         case .game:
-                            SessionView()
+                            SessionView(vm: SessionVM())
                                 .tag(tab)
                         case .list:
                             QuestionList()
