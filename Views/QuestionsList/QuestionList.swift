@@ -29,7 +29,7 @@ struct QuestionList: View {
     var body: some View {
         NavigationView {
             List {
-                ForEach(Array(vm.sections.keys), id: \.self) { section in
+                ForEach(Array(vm.sections.keys.sorted()), id: \.self) { section in
                     QuestionSection(vm: vm, section: section, cards: vm.sections[section] ?? [])
                 }
             }

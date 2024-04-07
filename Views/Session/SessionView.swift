@@ -13,18 +13,22 @@ struct SessionView: View {
     @State var title: String = "Title"
     var body: some View {
         VStack {
-            Text(vm.title)
+            Text(vm.title.uppercased())
                 .foregroundColor(.white)
+                .bold()
                 .font(.title)
                 .padding(.bottom, 30)
             
             ZStack {
-                ForEach(0..<vm.gameCardVMs.count, id: \.self) { index in
-                    GameCardView(gameCardVM: vm.gameCardVMs[index])
+                ForEach(0..<vm.gameCards.count, id: \.self) { index in
+                    GameCardView(
+                        cardModel: vm.gameCards[index],
+                        color: vm.gameCardColor(index: index)
+                    )
                 }
             }
         }
-        .padding(.top, 80)
+        .padding(.top, 20)
         .padding(.bottom, 140)
         .padding(.horizontal, 50)
         .background(

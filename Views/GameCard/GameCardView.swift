@@ -4,24 +4,24 @@
 
 import SwiftUI
 
-// TODO: Improve the animation, by watching the swiftHeroes Video.
-
 struct GameCardView: View {
     @ObservedObject private var vm: GameCardVM
     
-    init(gameCardVM: GameCardVM) {
-        vm = gameCardVM
+    init(cardModel: GameCard, color: Color) {
+        vm = GameCardVM(model: cardModel, color: color)
     }
     
     var body: some View {
         HStack {
             ZStack {
-                GameCardStructure(vm: vm, isFrontUp: true) {
+                GameCardStructure(vm: vm, color: vm.color, isFrontUp: true) {
                     Text(vm.cardData.question)
+                        .foregroundColor(.black)
                 }
                 
-                GameCardStructure(vm: vm, isFrontUp: false) {
+                GameCardStructure(vm: vm, color: vm.color, isFrontUp: false) {
                     Text(vm.cardData.answer)
+                        .foregroundColor(.black)
                 }
             }
         }
@@ -31,16 +31,14 @@ struct GameCardView: View {
 
 private struct GameCardStructure<InnerView: View>: View {
     @ObservedObject var vm: GameCardVM
-    @State var color: Color = ColorManager.Carrot
+    @State var color: Color
     @State var offset = CGSize.zero
     @State var hideView = false
 
-    var backColor: Color = ColorManager.Alizarin
-    var frontColor: Color = ColorManager.Carrot
     var isFrontUp: Bool
     
     @ViewBuilder var view: InnerView;
-    
+
     var body: some View {
         if !hideView {
             ZStack {
@@ -94,9 +92,11 @@ private struct GameCardStructure<InnerView: View>: View {
         case -500...(-150):
             offset = CGSize(width: -500, height: 0)
             hideView = true
+            
         case 150...500:
             offset = CGSize(width: 500, height: 0)
             hideView = true
+            
         default:
             offset = .zero
         }
@@ -106,14 +106,16 @@ private struct GameCardStructure<InnerView: View>: View {
         switch width {
         case -500...(-130):
             color = .red
+            
         case 130...500:
             color = .green
+            
         default:
-            color = frontColor
+            color = vm.color
         }
     }
 }
 
 #Preview {
-    GameCardView(gameCardVM: GameCardVM(model: GameCard()))
+    GameCardView(cardModel: GameCard(), color: .orange)
 }

@@ -7,16 +7,16 @@ import SwiftUI
 
 class GameCardVM : ObservableObject {
     let durationAndDelay : CGFloat = 0.3
-    
+    let color: Color
+    var isFlipped = false
+
     @Published var cardData: GameCard
-    
     @Published var backDegree: Double = 0.0
     @Published var frontDegree: Double = -90.0
     
-    var isFlipped = false
-    
-    init(model: GameCard) {
+    init(model: GameCard, color: Color) {
         self.cardData = model
+        self.color = color
     }
     
     func flipCard () {
