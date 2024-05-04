@@ -10,25 +10,24 @@ import Foundation
 
 struct QuestionList: View {
     @ObservedObject var vm = QuestionListVM()
+    @Environment(\.editMode) var editMode
     @State private var showAddSectionView = false
     
-    init() { UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: UIColor.white]
-    }
-    
-    var AddSection: some View {
-        Button("Add Section") {
-            showAddSectionView.toggle()
-        }.sheet(
-            isPresented: $showAddSectionView,
-            onDismiss: { vm.refreshData()} ) {
-                QuestionSelectionInputView(vm: .init(kind: .section) {
-                    vm.refreshData()
-                }).presentationDetents([.fraction(0.3)])
-            }
-    }
-    
     var body: some View {
-        NavigationView {
+        VStack {
+            HStack {
+                Text("Questions")
+                    .font(.title)
+                    .foregroundColor(ColorManager.firstColor)
+                Spacer()
+                Button(editMode?.wrappedValue == .inactive ? "Edit" : "Done") {
+                    editMode?.wrappedValue = editMode?.wrappedValue == .inactive ? .active : .inactive
+                 }
+                 .foregroundColor(ColorManager.firstColor)
+            }
+            .padding(.horizontal, 20)
+            
+            
             List {
                 ForEach(vm.sections) { section in
                     QuestionSection(
@@ -38,19 +37,26 @@ struct QuestionList: View {
                     )
                 }
             }
-            .navigationTitle("Questions")
-            .navigationBarItems(
-                leading: EditButton(),
-                trailing: AddSection
-            )
             .scrollContentBackground(.hidden)
-            .background(ColorManager.backgroundGradient)
             .refreshable {
                 vm.refreshData()
             }
+            
         }
-        .scrollContentBackground(.hidden)
-        .accentColor(ColorManager.firstColor)
+        .background(ColorManager.backgroundGradient)
+        .overlay(
+            FloatingButton(icon: Image(systemName: "plus")) {
+                showAddSectionView.toggle()
+            }
+        )
+        .sheet(
+            isPresented: $showAddSectionView,
+            onDismiss: { vm.refreshData()} ) {
+                QuestionSelectionInputView(vm: .init(kind: .section) {
+                    vm.refreshData()
+                }).presentationDetents([.fraction(0.3)])
+            }
+        
     }
 }
 

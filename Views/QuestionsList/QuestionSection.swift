@@ -12,7 +12,8 @@ struct QuestionSection: View {
     @State private var question = ""
     @State private var answer = ""
     @State private var showAddGameCardView = false
-    
+    @State private var showSessionView = false
+
     @Environment(\.editMode) private var editMode
     
     @ObservedObject var vm: QuestionSectionVM
@@ -31,6 +32,16 @@ struct QuestionSection: View {
                     ))
                         .presentationDetents([.fraction(0.3)])
                 }
+    }
+    
+    var StartSessionButton: some View {
+        Image(systemName: "play.circle")
+            .scaleEffect(1.30)
+            .foregroundStyle(ColorManager.firstColor)
+            .onTapGesture { showSessionView.toggle() }
+            .fullScreenCover(isPresented: $showSessionView) {
+                SessionView(vm: SessionVM(section: vm.section, cards: vm.cards))
+            }
     }
     
     var RemoveSectionButton: some View {
@@ -55,9 +66,12 @@ struct QuestionSection: View {
             
             Spacer()
             
-            AddGameCardButton
+            if editMode?.wrappedValue.isEditing == true {
+                AddGameCardButton
+            } else {
+                StartSessionButton
+            }
         }
-            .padding(.vertical, 10)
             .animation(.default, value: editMode?.wrappedValue)
         ) {
             ForEach(vm.cards) { gameCard in
@@ -124,16 +138,4 @@ class QuestionSectionVM: ObservableObject {
     func save() {
         dataManager.save()
     }
-}
-
-#Preview {
-    guard let section = DataManager.shared.sections().first else {
-        return QuestionSection(
-            vm: QuestionSectionVM(section: DataManager.shared.mockupSection()) {}
-        )
-    }
-    
-    return QuestionSection(
-        vm: QuestionSectionVM(section: section)  {}
-    )
 }
