@@ -15,12 +15,12 @@ struct GameCardView: View {
         HStack {
             ZStack {
                 GameCardStructure(vm: vm, color: vm.color, isFrontUp: true) {
-                    Text(vm.cardData.question)
+                    Text(vm.cardData.questionDescription)
                         .foregroundColor(.black)
                 }
                 
                 GameCardStructure(vm: vm, color: vm.color, isFrontUp: false) {
-                    Text(vm.cardData.answer)
+                    Text(vm.cardData.answerDescription)
                         .foregroundColor(.black)
                 }
             }

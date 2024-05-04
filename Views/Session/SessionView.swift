@@ -13,16 +13,16 @@ struct SessionView: View {
     @State var title: String = "Title"
     var body: some View {
         VStack {
-            Text(vm.title.uppercased())
+            Text(vm.section.nameDescription)
                 .foregroundColor(.white)
                 .bold()
                 .font(.title)
                 .padding(.bottom, 30)
             
             ZStack {
-                ForEach(0..<vm.gameCards.count, id: \.self) { index in
+                ForEach(0..<vm.section.cardsArray.count, id: \.self) { index in
                     GameCardView(
-                        cardModel: vm.gameCards[index],
+                        cardModel: vm.section.cardsArray[index],
                         color: vm.gameCardColor(index: index)
                     )
                 }
@@ -39,5 +39,12 @@ struct SessionView: View {
 }
 
 #Preview {
-    SessionView(vm: SessionVM(isDebug: true))
+    
+    guard let section = DataManager.shared.sections().first  else {
+        let section = DataManager.shared.mockupSection()
+        
+        return SessionView(vm: SessionVM(section: section, cards: section.cardsArray))
+    }
+    
+    return SessionView(vm: SessionVM(section: section, cards: section.cardsArray))
 }

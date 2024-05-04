@@ -8,8 +8,8 @@
 import SwiftUI
 
 class SessionVM: ObservableObject {
-    let gameCards: [GameCard]
-    let title: String
+    let section: GameSection
+    let cards: [GameCard]
     let colorPool = [ColorManager.Carrot, ColorManager.Silver, ColorManager.BelizeHole, ColorManager.SunFlower]
     var currentCardIndex: Int = 0
     
@@ -17,17 +17,9 @@ class SessionVM: ObservableObject {
         currentCardIndex > 0
     }
 
-    init(isDebug: Bool = false) {
-        if isDebug {
-            gameCards = [GameCard(), GameCard(), GameCard()]
-            title = "Test"
-            return
-        }
-        
-        let sections = DataManager.getSections()
-        gameCards = sections[sections.keys.first ?? ""] ?? []
-
-        title = sections.keys.first ?? ""
+    init(section: GameSection, cards: [GameCard]) {
+        self.section = section
+        self.cards = cards
     }
     
     func gameCardColor(index: Int) -> Color {

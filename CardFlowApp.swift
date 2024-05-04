@@ -19,10 +19,18 @@ struct CardFlowApp: App {
                 TabView(selection: $selectedTab,
                         content:  {
                     ForEach(Tab.allCases, id: \.rawValue) {tab in
+                        let section = DataManager.shared.sections().first
+                        
                         switch tab {
                         case .game:
-                            SessionView(vm: SessionVM())
-                                .tag(tab)
+                            if let section {
+                                SessionView(vm: SessionVM(
+                                    section: section,
+                                    cards: section.cardsArray
+                                )).tag(tab)
+                            } else {
+                                Text("NO DATA").tag(tab)
+                            }
                         case .list:
                             QuestionList()
                                 .tag(tab)
@@ -34,7 +42,7 @@ struct CardFlowApp: App {
                 VStack {
                     Spacer()
                     TabBard(selectedTab: $selectedTab)
-                        
+                    
                 }
                 .padding(.bottom, 20)
                 .edgesIgnoringSafeArea(.all)

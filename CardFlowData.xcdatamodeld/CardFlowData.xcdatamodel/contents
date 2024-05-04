@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22757" systemVersion="23D60" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="GameCard" representedClassName="GameCard" syncable="YES">
+        <attribute name="answer" attributeType="String" defaultValueString=""/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="order" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="question" attributeType="String" defaultValueString=""/>
+        <relationship name="section" maxCount="1" deletionRule="Nullify" destinationEntity="GameSection" inverseName="cards" inverseEntity="GameSection"/>
+    </entity>
+    <entity name="GameSection" representedClassName="GameSection" syncable="YES">
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" attributeType="String" defaultValueString="&quot;&quot;"/>
+        <relationship name="cards" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="GameCard" inverseName="section" inverseEntity="GameCard"/>
+    </entity>
+</model>
