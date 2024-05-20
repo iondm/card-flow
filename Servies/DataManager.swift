@@ -54,6 +54,7 @@ class DataManager {
         gameCard.answer = answer
         gameCard.question = question
         gameCard.order = Int32(order)
+        gameCard.isGuessed = false
         section.addToCards(gameCard)
         save()
         return gameCard

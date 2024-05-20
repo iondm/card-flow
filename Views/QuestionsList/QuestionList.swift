@@ -37,6 +37,7 @@ struct QuestionList: View {
                     )
                 }
             }
+            .listStyle(SidebarListStyle())
             .scrollContentBackground(.hidden)
             .refreshable {
                 vm.refreshData()
@@ -50,13 +51,11 @@ struct QuestionList: View {
             }
         )
         .sheet(
-            isPresented: $showAddSectionView,
-            onDismiss: { vm.refreshData()} ) {
+            isPresented: $showAddSectionView ) {
                 QuestionSelectionInputView(vm: .init(kind: .section) {
                     vm.refreshData()
-                }).presentationDetents([.fraction(0.3)])
+                })
             }
-        
     }
 }
 

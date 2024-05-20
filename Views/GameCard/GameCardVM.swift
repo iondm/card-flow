@@ -38,4 +38,8 @@ class GameCardVM : ObservableObject {
         }
     }
     
+    func update(isGuessed: Bool) {
+        cardData.isGuessed = isGuessed
+        DataManager.shared.save()
+    }
 }

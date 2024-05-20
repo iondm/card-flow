@@ -18,8 +18,9 @@ extension GameCard {
 
     @NSManaged public var answer: String?
     @NSManaged public var id: UUID?
-    @NSManaged public var question: String?
     @NSManaged public var order: Int32
+    @NSManaged public var question: String?
+    @NSManaged public var isGuessed: Bool
     @NSManaged public var section: GameSection?
 
 }

@@ -12,31 +12,30 @@ struct QuestionSection: View {
     @State private var question = ""
     @State private var answer = ""
     @State private var showAddGameCardView = false
+    @State private var showEditGameCardView = false
     @State private var showSessionView = false
-
+    
     @Environment(\.editMode) private var editMode
     
     @ObservedObject var vm: QuestionSectionVM
     
     var AddGameCardButton: some View {
         Image(systemName: "plus.app")
-            .scaleEffect(1.30)
+            .scaleEffect(1.40)
             .foregroundStyle(ColorManager.firstColor)
             .onTapGesture { showAddGameCardView.toggle() }
             .sheet(
-                isPresented: $showAddGameCardView,
-                onDismiss: { vm.save()} ) {
+                isPresented: $showAddGameCardView) {
                     QuestionSelectionInputView(vm: .init(
-                        kind: .question(section: vm.section),
+                        kind: .newGameCard(section: vm.section),
                         updateListFunction: vm.updateListFunction
                     ))
-                        .presentationDetents([.fraction(0.3)])
                 }
     }
     
     var StartSessionButton: some View {
         Image(systemName: "play.circle")
-            .scaleEffect(1.30)
+            .scaleEffect(1.40)
             .foregroundStyle(ColorManager.firstColor)
             .onTapGesture { showSessionView.toggle() }
             .fullScreenCover(isPresented: $showSessionView) {
@@ -53,6 +52,19 @@ struct QuestionSection: View {
             }
     }
     
+    var ShuffleCardsButton: some View {
+        Image(systemName: "shuffle.circle")
+            .scaleEffect(1.30)
+            .foregroundStyle(ColorManager.firstColor)
+            .onTapGesture { vm.shuffleCards() }
+    }
+    
+    var EditGameCardButton: some View {
+        Image(systemName: "square.and.pencil")
+            .foregroundStyle(.gray)
+            .scaleEffect(1.30)
+        .padding(.trailing, 6)    }
+    
     var body: some View {
         Section(header: HStack {
             if editMode?.wrappedValue.isEditing == true {
@@ -67,32 +79,54 @@ struct QuestionSection: View {
             Spacer()
             
             if editMode?.wrappedValue.isEditing == true {
+                                
+                ShuffleCardsButton
+                    .padding(.trailing, 10)
+                                
                 AddGameCardButton
+                
             } else {
+                
                 StartSessionButton
+                
             }
         }
-            .animation(.default, value: editMode?.wrappedValue)
+            .animation(.easeInOut.delay(-0.1), value: editMode?.wrappedValue)
+            .sheet(
+                isPresented: $showEditGameCardView) {
+                    QuestionSelectionInputView(vm: .init(
+                        kind: .gameCard(section: vm.section, gameCard: vm.selectedGameCard!),
+                        updateListFunction: vm.updateListFunction
+                    ))
+                }
         ) {
             ForEach(vm.cards) { gameCard in
-                VStack {
-                    HStack {
-                        Text(gameCard.questionDescription)
-                        Spacer()
+                HStack {
+                    if editMode?.wrappedValue.isEditing == true {
+                        EditGameCardButton.onTapGesture {                            
+                            vm.selectedGameCard = gameCard
+                            showEditGameCardView.toggle()
+                        }
+                        
                     }
-                    HStack {
-                        Text(gameCard.answerDescription)
-                            .foregroundColor(Color.gray)
-                        Spacer()
+                    VStack {
+                        
+                        HStack {
+                            Text(gameCard.questionDescription)
+                            Spacer()
+                        }
+                        HStack {
+                            Text(gameCard.answerDescription)
+                                .foregroundColor(Color.gray)
+                            Spacer()
+                        }
                     }
                 }
+                
             }
-            .onDelete(perform: { index in
-                vm.delete(index: index)
-            })
             .onMove(perform: { newIndices, originindex in
                 vm.move(originIndices: newIndices, toIndex: originindex)
-            })
+            }).animation(.easeInOut.delay(-0.1), value: editMode?.wrappedValue)
         }
     }
 }
@@ -102,6 +136,7 @@ class QuestionSectionVM: ObservableObject {
     let dataManager = DataManager.shared
     let updateListFunction: (() -> Void)
     var cards: [GameCard]
+    var selectedGameCard: GameCard? = nil
     
     init(
         section: GameSection,
@@ -137,5 +172,15 @@ class QuestionSectionVM: ObservableObject {
     
     func save() {
         dataManager.save()
+    }
+    
+    func shuffleCards() {
+        cards.shuffle()
+        
+        cards.enumerated().forEach { offset, card in
+            card.order = Int32(offset)
+        }
+        dataManager.save()
+        updateListFunction()
     }
 }

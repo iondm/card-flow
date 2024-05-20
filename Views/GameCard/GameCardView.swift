@@ -92,10 +92,12 @@ private struct GameCardStructure<InnerView: View>: View {
         case -500...(-150):
             offset = CGSize(width: -500, height: 0)
             hideView = true
+            vm.update(isGuessed: false)
             
         case 150...500:
             offset = CGSize(width: 500, height: 0)
             hideView = true
+            vm.update(isGuessed: true)
             
         default:
             offset = .zero
